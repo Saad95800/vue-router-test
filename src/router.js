@@ -12,13 +12,38 @@ const routes = [
   {
     path: '/about',
     name: 'about',
-    component: AboutPage
+    component: AboutPage,
+    meta: {
+      requiresAuth: true // Ceci est un marqueur pour les routes qui nécessitent une authentification
+    }
+  },
+  {
+    path: '/login',
+    name: 'login',
+    component: () => import('./views/LoginPage.vue')
   }
 ];
 
 const router = createRouter({
   history: createWebHistory(),
   routes
+});
+
+// Simuler un utilisateur connecté ou non
+const isUserLoggedIn = () => {
+    return localStorage.getItem('userLoggedIn') === 'true';
+}
+
+router.beforeEach((to, from, next) => {
+    if (to.matched.some(record => record.meta.requiresAuth)) {
+        if (!isUserLoggedIn()) {
+          next({ name: 'login' });
+        } else {
+          next();
+        }
+      } else {
+        next();
+      }
 });
 
 export default router;
