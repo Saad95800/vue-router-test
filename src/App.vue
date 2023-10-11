@@ -10,25 +10,23 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: 'App',
-  data() {
-    return {
-      isUserLoggedIn: localStorage.getItem('userLoggedIn') === 'true'
-    };
-  },
-  methods: {
-    logout() {
-      localStorage.removeItem('userLoggedIn');
-      this.isUserLoggedIn = false;
-      this.$router.push({ name: 'login' });
-    }
-  },
-  watch: {
-    $route(to, from) {
-      this.isUserLoggedIn = localStorage.getItem('userLoggedIn') === 'true';
-    }
-  }
+<script setup>
+import { ref, watch } from 'vue';
+import { useRouter } from 'vue-router';
+
+const isUserLoggedIn = ref(localStorage.getItem('userLoggedIn') === 'true');
+const router = useRouter();
+
+const logout = () => {
+  localStorage.removeItem('userLoggedIn');
+  isUserLoggedIn.value = false;
+  router.push({ name: 'login' });
 };
+
+watch(
+  () => router.currentRoute, 
+  () => {
+    isUserLoggedIn.value = localStorage.getItem('userLoggedIn') === 'true';
+  }
+);
 </script>

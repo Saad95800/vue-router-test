@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 
 import HomePage from './views/HomePage.vue';
 import AboutPage from './views/AboutPage.vue';
+import LoginPage from './views/LoginPage.vue';
 
 const routes = [
   {
@@ -20,7 +21,7 @@ const routes = [
   {
     path: '/login',
     name: 'login',
-    component: () => import('./views/LoginPage.vue')
+    component: () => LoginPage
   }
 ];
 
@@ -33,12 +34,13 @@ const router = createRouter({
 const isUserLoggedIn = () => {
     return localStorage.getItem('userLoggedIn') === 'true';
 }
-
+// Création d'un navigation guard
 router.beforeEach((to, from, next) => {
+    console.log('On change de page !')
     if (to.matched.some(record => record.meta.requiresAuth)) {
-        if (!isUserLoggedIn()) {
+        if (!isUserLoggedIn()) { // Si l'user n'est pas connecté
           next({ name: 'login' });
-        } else {
+        } else { // Si l'user est connecté
           next();
         }
       } else {
